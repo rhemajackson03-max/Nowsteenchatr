@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TKC-Style Chat</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+    #chat { border: 1px solid #ccc; height: 400px; overflow-y: auto; padding: 10px; }
+    #users { margin-bottom: 10px; color: #555; }
+    .message { margin: 5px 0; }
+    .meta { font-size: 0.8em; color: #777; }
+    #form { margin-top: 10px; display: flex; }
+    #form input { flex: 1; padding: 8px; }
+    #form button { padding: 8px 12px; }
+  </style>
+</head>
+<body>
+  <h2>TKC Chat Clone</h2>
+
+  <div>
+    <input id="username" placeholder="Enter your name" />
+    <input id="room" placeholder="Enter room name" />
+    <button onclick="joinRoom()">Join Room</button>
+  </div>
+
+  <div id="users"></div>
+  <div id="chat"></div>
+
+  <form id="form" onsubmit="sendMessage(event)">
+    <input id="msg" autocomplete="off" placeholder="Type a message…" />
+    <button>Send</button>
+  </form>
+
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  <script src="/static/chat.js"></script>
+</body>
+</html>
