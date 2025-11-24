@@ -1,0 +1,62 @@
+const socket = io();
+
+// UI elements
+const usernameInput = document.getElementById("username");
+const roomInput = document.getElementById("room");
+const chatDiv = document.getElementById("chat");
+const usersDiv = document.getElementById("users");
+const msgInput = document.getElementById("msg");
+
+let currentRoom = null;
+let currentUser = null;
+
+function joinRoom() {
+  const user = usernameInput.value.trim();
+  const room = roomInput.value.trim();
+  if (!user || !room) {
+    alert("Enter username and room");
+    return;
+  }
+  currentUser = user;
+  currentRoom = room;
+  socket.emit("join", { user, room });
+  chatDiv.innerHTML = "";
+}
+
+socket.on("history", (data) => {
+  data.history.forEach(item => {
+    addMessage(item.user, item.msg, item.time);
+  });
+});
+
+socket.on("user_joined", (data) => {
+  addMessage("SYSTEM", `${data.user} joined the room`);
+});
+
+socket.on("user_left", (data) => {
+  addMessage("SYSTEM", `${data.user} left the room`);
+});
+
+socket.on("room_users", (data) => {
+  usersDiv.textContent = "Users: " + data.users.join(", ");
+});
+
+socket.on("message", (data) => {
+  addMessage(data.user, data.msg, data.time);
+});
+
+function sendMessage(e) {
+  if (e) e.preventDefault();
+  const msg = msgInput.value.trim();
+  if (!msg || !currentRoom || !currentUser) return;
+  socket.emit("send_message", { user: currentUser, room: currentRoom, msg });
+  msgInput.value = "";
+}
+
+function addMessage(user, msg, time) {
+  const div = document.createElement("div");
+  div.classList.add("message");
+  div.innerHTML = `<span class="meta">${user} @ ${time}:</span> ${msg}`;
+  chatDiv.appendChild(div);
+  chatDiv.scrollTop = chatDiv.scrollHeight;
+}
